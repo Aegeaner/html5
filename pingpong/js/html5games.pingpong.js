@@ -5,7 +5,10 @@ var KEY = {
 	S: 83
 }
 
-var pingpong = {}
+var pingpong = {
+	scoreA: 0,
+	scoreB: 0
+}
 pingpong.pressedKeys = {}
 pingpong.ball = {
 	speed: 5,
@@ -49,6 +52,10 @@ function moveBall() {
 	// 检测右边
 	if(ball.x + ball.speed * ball.directionX > playgroundWidth)
 	{
+		// 玩家B丢分
+		pingpong.scoreA++;
+		$("#scoreA").html(pingpong.scoreA);
+
 		ball.x = 250;
 		ball.y = 100;
 		$("#ball").css({
@@ -61,6 +68,10 @@ function moveBall() {
 	// 检测左边
 	if(ball.x + ball.speed * ball.directionX < 0)
 	{
+		// 玩家A丢分
+		pingpong.scoreB++;
+		$("#scoreB").html(pingpong.scoreB);
+
 		ball.x = 150;
 		ball.y = 100;
 		$("#ball").css({
