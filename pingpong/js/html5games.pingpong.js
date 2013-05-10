@@ -46,18 +46,60 @@ function moveBall() {
 		ball.directionY = 1;
 	}
 
+	// 检测右边
 	if(ball.x + ball.speed * ball.directionX > playgroundWidth)
 	{
+		ball.x = 250;
+		ball.y = 100;
+		$("#ball").css({
+			"left": ball.x,
+			"top": ball.y
+		});
 		ball.directionX = -1;
 	}
 
+	// 检测左边
 	if(ball.x + ball.speed * ball.directionX < 0)
 	{
+		ball.x = 150;
+		ball.y = 100;
+		$("#ball").css({
+			"left": ball.x,
+			"top": ball.y
+		});
 		ball.directionX = 1;
 	}
 
 	ball.x += ball.speed * ball.directionX;
 	ball.y += ball.speed * ball.directionY;
+
+    // 检测左边球拍
+	var paddleAX = parseInt($("#paddleA").css("left")) + parseInt($("#paddleA").css("width"));
+	var paddleAYBottom = parseInt($("#paddleA").css("top")) + parseInt($("#paddleA").css("height"));
+	var paddleAYTop = parseInt($("#paddleA").css("top"));
+
+	if(ball.x + ball.speed * ball.directionX < paddleAX)
+	{
+		if(ball.y + ball.speed * ball.directionY <= paddleAYBottom
+			&& ball.y + ball.speed * ball.directionY >= paddleAYTop)
+		{
+			ball.directionX = 1;
+		}
+	}
+
+	// 检测右边球拍
+	var paddleBX = parseInt($("#paddleB").css("left"));
+	var paddleBYBottom = parseInt($("#paddleB").css("top")) + parseInt($("#paddleB").css("width"));
+	var paddleBYTop = parseInt($("#paddleB").css("top"));
+
+	if(ball.x + ball.speed * ball.directionX >= paddleBX)
+	{
+		if(ball.y + ball.speed * ball.directionY <= paddleBYBottom
+			&& ball.y + ball.speed * ball.directionY >= paddleAYTop)
+		{
+			ball.directionX = -1;
+		}
+	}
 
 	$("#ball").css({
 		"left": ball.x,
