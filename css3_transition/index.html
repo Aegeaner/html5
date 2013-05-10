@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>熟悉CSS3转换</title>
-	<link rel="stylesheet" href="css/css3transition.css" />
+	<link rel="stylesheet" href="css/css3flip.css" />
 </head>
 <body>
 	<header>
@@ -11,8 +11,14 @@
 	</header>
 	<section id="game">
 		<div id="cards">
-			<div id="card1" class="card cardAK"></div>
-			<div id="card2" class="card cardAQ"></div>
+			<div class="card">
+				<div class="face front"></div>
+				<div class="face back cardAK"></div>
+			</div>
+			<div class="card">
+				<div class="face front"></div>
+				<div class="face back cardAQ"></div>
+			</div>
 		</div>
 	</section>
 	<footer>
@@ -21,8 +27,11 @@
 	<script src="js/jquery-2.0.0.min.js"></script>
 	<script>
 	$(function() {
-		$("#card1").addClass("moveAndScale");
-		$("#card2").addClass("rotateRight");
+		$("#cards").children().each(function(index) {
+			$(this).click(function() {
+				$(this).toggleClass("card-flipped");
+			});
+		});
 	});
 	</script>
 </body>
