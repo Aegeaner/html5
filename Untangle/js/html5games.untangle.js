@@ -16,6 +16,9 @@ var untangleGame = {
 	lines: []
 };
 
+var canvas = document.getElementById("game");
+var ctx = canvas.getContext("2d");
+
 function drawLine(ctx, x1, y1, x2, y2, thickness) {
 	ctx.beginPath();
 	ctx.moveTo(x1, y1);
@@ -33,10 +36,22 @@ function drawCircle(ctx, x, y, radius) {
 	ctx.fill();
 }
 
+function clear(ctx) {
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function connectCircles() {
+	untangleGame.lines.length = 0;
+	for(var i = 0; i < untangleGame.circles.length; i++) {
+		var startPoint = untangleGame.circles[i];
+		for(var j = 0; j < i; j++) {
+			var endPoint = untangleGame.circles[j];
+			untangleGame.lines.push(new Line(startPoint, endPoint, untangleGame.thinLinethickness));
+		}
+	}
+}
+
 $(function() {
-	var canvas = document.getElementById("game");
-	var ctx = canvas.getContext("2d");
-	
 	var circleRadius = 10;
 
 	var width = canvas.width;
@@ -50,12 +65,64 @@ $(function() {
 		untangleGame.circles.push(new Circle(x, y, circleRadius));
 	}
 
-	for(var i = 0; i < untangleGame.circles.length; i++) {
-		var startPoint = untangleGame.circles[i];
-		for(var j = 0; j < i; j++) {
-			var endPoint = untangleGame.circles[j];
-			drawLine(ctx, startPoint.x, startPoint.y, endPoint.x, endPoint.y, 1);
-			untangleGame.lines.push(new Line(startPoint, endPoint, untangleGame.thinLinethickness));
+	connectCircles();
+
+	// 检查按下鼠标的位置是否在任何一个圆上，并设置那个圆为拖曳目标小圆球
+	$("#game").mousedown(function(e) {
+		var canvasPosition = $(this).offset();
+		var mouseX = (e.pageX - canvasPosition.left) || 0;
+		var mouseY = (e.pageY - canvasPosition.top) || 0;
+
+		for(var i = 0; i < untangleGame.circles.length; i++)
+		{
+			var circleX = untangleGame.circles[i].x;
+			var circleY = untangleGame.circles[i].y;
+			var radius = untangleGame.circles[i].radius;
+			if(Math.pow(mouseX - circleX, 2) + Math.pow(mouseY - circleY, 2) < Math.pow(radius, 2))
+			{
+				untangleGame.targetCircle = i;
+				break;
+			}
 		}
-	}
+	});
+
+	// 当鼠标移动时，移动拖曳目标小圆球
+	$("#game").mousemove(function(e) {
+		if(untangleGame.targetCircle != undefined) 
+		{
+			var canvasPosition = $(this).offset();
+			var mouseX = (e.pageX - canvasPosition.left) || 0;
+			var mouseY = (e.pageY - canvasPosition.top) || 0;
+			var radius = untangleGame.circles[untangleGame.targetCircle].radius;
+			untangleGame.circles[untangleGame.targetCircle] = new Circle(mouseX, mouseY, radius);
+		};
+		connectCircles();
+	});
+
+	// 当放开鼠标时， 清除拖曳目标小圆球的数据
+	$("#game").mouseup(function(e) {
+		untangleGame.targetCircle = undefined;
+	});
+
+	setInterval(gameloop, 30);
 });
+
+function gameloop() {
+	// 重绘前清空Canvas
+	clear(ctx);
+
+	// 绘制所有保存的线
+	for(var i = 0; i < untangleGame.lines.length; i++) {
+		var line = untangleGame.lines[i];
+		var startPoint = line.startPoint;
+		var endPoint = line.endPoint;
+		var thickness = line.thickness;
+		drawLine(ctx, startPoint.x, startPoint.y, endPoint.x, endPoint.y, thickness);
+	}
+
+	// 绘制所有保存的圆
+	for(var i = 0; i < untangleGame.circles.length; i++) {
+		var circle = untangleGame.circles[i];
+		drawCircle(ctx, circle.x, circle.y, circle.radius);
+	}
+}
