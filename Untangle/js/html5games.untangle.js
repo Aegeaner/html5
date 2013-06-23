@@ -1,4 +1,12 @@
-var untangleGame = {};
+function Circle(x, y, radius) {
+	this.x = x;
+	this.y = y;
+	this.radius = radius;
+}
+
+var untangleGame = {
+	circles: []
+};
 
 function drawCircle(ctx, x, y, radius) {
 	ctx.fillStyle = "rgba(200, 200, 100, .9)";
@@ -22,5 +30,6 @@ $(function() {
 		var x = Math.random() * width;
 		var y = Math.random() * height;
 		drawCircle(ctx, x, y, circleRadius);
+		untangleGame.circles.push(new Circle(x, y, circleRadius));
 	}
 });
