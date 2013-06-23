@@ -4,9 +4,26 @@ function Circle(x, y, radius) {
 	this.radius = radius;
 }
 
+function Line(startPoint, endPoint, thickness) {
+	this.startPoint = startPoint;
+	this.endPoint = endPoint;
+	this.thickness = thickness;
+}
+
 var untangleGame = {
-	circles: []
+	circles: [],
+	thinLinethickness: 1,
+	lines: []
 };
+
+function drawLine(ctx, x1, y1, x2, y2, thickness) {
+	ctx.beginPath();
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+	ctx.lineWidth = thickness;
+	ctx.strokeStyle = "#cfc";
+	ctx.stroke();
+}
 
 function drawCircle(ctx, x, y, radius) {
 	ctx.fillStyle = "rgba(200, 200, 100, .9)";
@@ -25,11 +42,20 @@ $(function() {
 	var width = canvas.width;
 	var height = canvas.height;
 
-	var circleCount = 10;
+	var circleCount = 5;
 	for(var i = 0; i < circleCount; i++) {
 		var x = Math.random() * width;
 		var y = Math.random() * height;
 		drawCircle(ctx, x, y, circleRadius);
 		untangleGame.circles.push(new Circle(x, y, circleRadius));
+	}
+
+	for(var i = 0; i < untangleGame.circles.length; i++) {
+		var startPoint = untangleGame.circles[i];
+		for(var j = 0; j < i; j++) {
+			var endPoint = untangleGame.circles[j];
+			drawLine(ctx, startPoint.x, startPoint.y, endPoint.x, endPoint.y, 1);
+			untangleGame.lines.push(new Line(startPoint, endPoint, untangleGame.thinLinethickness));
+		}
 	}
 });
