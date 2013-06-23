@@ -37,6 +37,15 @@ body {
 	box-align: center;
 }
 
+#game-scene {
+	background: #efefef url(../images/game_bg.jpg);
+}
+
+#game-canvas, #game-background-canvas {
+	position: absolute;
+}
+
+
 /* Menu Scene Elements */
 a[href='#game'] {
 	width: 146px;
